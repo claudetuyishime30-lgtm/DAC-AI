@@ -1,0 +1,358 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D.A.C AI | Rwanda CBC Lesson Planner</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#eef3fb;color:#17243a}
+header{background:#092b60;color:#fff;padding:25px 18px;text-align:center}
+header h1{margin:0;font-size:30px}
+header p{margin:7px 0 0}
+.container{max-width:1050px;margin:24px auto;padding:24px;background:#fff;border-radius:14px;box-shadow:0 4px 18px #00000012}
+h2{color:#0b3979}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.field{margin-bottom:14px}
+label{display:block;font-weight:bold;margin-bottom:7px}
+input,select,textarea{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:7px;font-size:15px;font-family:Arial,sans-serif}
+textarea{min-height:80px;resize:vertical}
+button{background:#0755b8;color:#fff;border:0;padding:12px 18px;border-radius:8px;font-size:15px;cursor:pointer;margin:5px 5px 5px 0}
+button:hover{background:#093b7d}
+button.secondary{background:#475569}
+button.green{background:#167044}
+.actions{margin-top:15px}
+#result{margin-top:25px}
+.note{background:#edf5ff;border-left:4px solid #0755b8;padding:12px;margin:12px 0;border-radius:5px}
+.plan-wrap{overflow-x:auto}
+table.lesson-table{width:100%;border-collapse:collapse;background:#fff;margin:15px 0;min-width:850px}
+.lesson-table th,.lesson-table td{border:1px solid #444;padding:9px;text-align:left;vertical-align:top;font-size:13px;white-space:pre-wrap}
+.lesson-table th{background:#dce8fa}
+.lesson-table .center{text-align:center}
+.summary-lines{line-height:1.5}
+.summary-lines div{margin:3px 0}
+footer{text-align:center;color:#64748b;padding:20px}
+@media(max-width:650px){.grid{grid-template-columns:1fr}.container{margin:10px;padding:15px}header h1{font-size:25px}}
+@media print{
+ body{background:#fff}
+ header,.container form,.screen-actions,footer,.no-print{display:none!important}
+ .container{max-width:none;margin:0;padding:0;box-shadow:none}
+ #result{margin:0}
+ .plan-wrap{overflow:visible}
+ table.lesson-table{min-width:0;width:100%;page-break-inside:auto}
+ .lesson-table tr{page-break-inside:avoid;page-break-after:auto}
+ .lesson-table th,.lesson-table td{font-size:10px;padding:6px}
+ @page{size:landscape;margin:10mm}
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>D.A.C AI</h1>
+  <p>Rwanda CBC Lesson Planner</p>
+  <p>Smart Planning for Teachers</p>
+</header>
+
+<main class="container">
+<h2>Lesson Information</h2>
+<form id="lessonForm">
+  <h2>General Lesson Information</h2>
+  <div class="grid">
+    <div class="field"><label for="schoolName">School Name</label><input id="schoolName" placeholder="Enter school name"></div>
+    <div class="field"><label for="teacherName">Teacher's Name</label><input id="teacherName" placeholder="Enter teacher's name"></div>
+    <div class="field"><label for="term">Term</label><select id="term"><option value="">Select term</option><option>Term 1</option><option>Term 2</option><option>Term 3</option></select></div>
+    <div class="field"><label for="level">School Level</label><select id="level" required><option value="">Select level</option><option>Primary</option><option>Secondary</option></select></div>
+    <div class="field"><label for="language">Language</label><select id="language"><option>English</option><option>Kinyarwanda</option></select></div>
+    <div class="field"><label for="grade">Class / Grade</label><select id="grade" required><option value="">Select class</option><option>P4</option><option>P5</option><option>P6</option><option>S1</option><option>S2</option><option>S3</option></select></div>
+    <div class="field"><label for="subject">Subject</label><select id="subject" required><option value="">Select subject</option><option>Social Studies and Religious Education</option><option>Mathematics</option><option>Science and Elementary Technology</option><option>English</option><option>Kinyarwanda</option><option>French</option></select></div>
+    <div class="field"><label for="unitNumber">Unit Number</label><input id="unitNumber" type="number" min="1" placeholder="e.g. 4"></div>
+    <div class="field"><label for="lessonNumber">Lesson Number</label><input id="lessonNumber" placeholder="e.g. 3 of 13"></div>
+    <div class="field"><label for="duration">Duration (minutes)</label><input id="duration" type="number" min="1" value="40" required></div>
+    <div class="field"><label for="date">Date</label><input id="date" type="date"></div>
+    <div class="field"><label for="totalLearners">Class Size (Total)</label><input id="totalLearners" type="number" min="0" value="0" placeholder="Enter total number of learners"></div>
+    <div class="field"><label for="specialNeeds">Special Educational Needs</label><input id="specialNeeds" placeholder="e.g. None"></div>
+    <div class="field"><label for="location">Class Location</label><select id="location"><option>Inside the classroom</option><option>Outside the classroom</option><option>School garden</option><option>Library</option><option>Community / field visit</option></select></div>
+  </div>
+
+  <h2>Lesson Preparation</h2>
+  <div class="field"><label for="unitTitle">Unit Title</label><input id="unitTitle" placeholder="Enter unit title"></div>
+  <div class="field"><label for="keyCompetence">Key Unit Competence</label><textarea id="keyCompetence" placeholder="Can be filled from the selected REB unit or entered manually"></textarea></div>
+  <div class="field"><label for="topic">Title of the Lesson / Topic</label><input id="topic" placeholder="Enter lesson title" required></div>
+  <div class="field"><label for="subtopic">Sub-topic</label><input id="subtopic" placeholder="Enter sub-topic"></div>
+  <div class="field"><label for="objectives">Instructional Objectives</label><textarea id="objectives" placeholder="By the end of the lesson, learners will be able to..."></textarea></div>
+  <div class="field"><label for="materials">Learning Materials</label><textarea id="materials" placeholder="Books, charts, flashcards, objects..."></textarea></div>
+  <div class="field"><label for="references">References</label><textarea id="references" placeholder="REB syllabus, learner's book, teacher's guide..."></textarea></div>
+  <div class="actions"><button type="submit">Prepare CBC Lesson Plan</button><button type="button" class="secondary" id="clearBtn">Clear Form</button></div>
+</form>
+
+<div id="result"></div>
+</main>
+<footer>D.A.C AI | Designed for Rwanda CBC Education</footer>
+
+<script>
+const form = document.getElementById("lessonForm");
+const result = document.getElementById("result");
+
+function value(id){return document.getElementById(id).value.trim();}
+function safe(v){return String(v ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+
+form.addEventListener("submit", async function(e){
+  e.preventDefault();
+  const payload = {
+    schoolName:value("schoolName"), teacherName:value("teacherName"), term:value("term"),
+    level:value("level"), language:value("language"), grade:value("grade"),
+    subject:value("subject"), unitNumber:value("unitNumber"), lessonNumber:value("lessonNumber"),
+    duration:value("duration"), date:value("date"), totalLearners:value("totalLearners"),
+    specialNeeds:value("specialNeeds"), location:value("location"), unitTitle:value("unitTitle"),
+    keyCompetence:value("keyCompetence"), topic:value("topic"), subtopic:value("subtopic"),
+    objectives:value("objectives"), materials:value("materials"), references:value("references")
+  };
+
+  result.innerHTML = '<div class="note">Preparing your CBC lesson plan...</div>';
+  try{
+    const response = await fetch("/api/generate",{
+      method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)
+    });
+    const data = await response.json();
+    if(!response.ok || !data.success) throw new Error(data.message || "Lesson generation failed.");
+    renderPlan(data.lesson, payload.totalLearners);
+  }catch(err){
+    result.innerHTML = `<div class="note"><strong>Generation Error:</strong> ${safe(err.message)}<br>Check that the D.A.C AI server is running.</div>`;
+  }
+});
+
+
+function renderPlan(p, enteredTotal){
+  const a = p.activities || [];
+  const intro = a[0] || {};
+  const dev = a[1] || {};
+  const end = a[2] || {};
+  const activityRows = [intro, dev, end];
+
+  const learnerCount = Number(
+    p.totalLearners || enteredTotal || (Number(p.boys || 0) + Number(p.girls || 0))
+  );
+
+  const dateText = p.date ? safe(p.date) : "";
+  const cell = v => safe(v || "");
+
+  const seenGeneric = new Set();
+  const seenCross = new Set();
+
+  function competencyContent(activity){
+    const parts = [];
+    const generic = String(activity.generic || "").trim();
+    const cross = String(activity.cross || "").trim();
+
+    if(generic && !seenGeneric.has(generic)){
+      seenGeneric.add(generic);
+      parts.push("<strong>Generic competences:</strong> " + safe(generic));
+    }
+
+    if(cross && !seenCross.has(cross)){
+      seenCross.add(cross);
+      parts.push("<strong>Cross-cutting issues:</strong> " + safe(cross));
+    }
+
+    return parts.length ? parts.join("<br>") : "—";
+  }
+
+  // Create two short summary lines for each group.
+  function shortSummary(items, key, label){
+    const seen = new Set();
+    const texts = items
+      .map(item => String(item[key] || "").trim())
+      .filter(text => text && !seen.has(text) && seen.add(text))
+      .slice(0, 2);
+
+    function shorten(text){
+      const max = 115;
+      if(text.length <= max) return safe(text);
+      const shortened = text.slice(0, max);
+      const lastSpace = shortened.lastIndexOf(" ");
+      return safe(shortened.slice(0, lastSpace > 60 ? lastSpace : max) + "...");
+    }
+
+    return "<strong>" + label + ":</strong><div class='summary-lines'>" +
+      (texts.length
+        ? texts.map((text, index) => "<div>" + (index + 1) + ". " + shorten(text) + "</div>").join("")
+        : "<div>—</div>") +
+      "</div>";
+  }
+
+  const teacherSummary = shortSummary(activityRows, "teacher", "Teacher activities");
+  const learnerSummary = shortSummary(activityRows, "learners", "Learner activities");
+
+  result.innerHTML = `
+  <div class="screen-actions actions">
+    <button type="button" onclick="window.print()">Print / Save PDF</button>
+    <button type="button" class="green" onclick="exportWord()">Export Word</button>
+  </div>
+
+  <div id="printArea">
+  <h2 style="text-align:center">${cell(p.title)}</h2>
+
+  <div class="note no-print">
+    ${cell(p.curriculumNote)}
+    ${p.unitFound ? "" : " Please verify the curriculum details before using this plan."}
+  </div>
+
+  <div class="plan-wrap">
+  <table class="lesson-table" id="lessonTable">
+    <tbody>
+
+      <tr>
+        <th colspan="8" class="center">LESSON PLAN</th>
+      </tr>
+
+      <tr>
+        <th colspan="4">School Name: ${cell(p.schoolName)}</th>
+        <th colspan="4">Teacher's name: ${cell(p.teacherName)}</th>
+      </tr>
+
+      <tr>
+        <th>Term</th>
+        <th>Date</th>
+        <th>Subject</th>
+        <th>Class</th>
+        <th>Unit No.</th>
+        <th>Lesson No.</th>
+        <th>Duration</th>
+        <th>Class size</th>
+      </tr>
+
+      <tr>
+        <td>${cell(p.term)}</td>
+        <td>${dateText}</td>
+        <td>${cell(p.subject)}</td>
+        <td>${cell(p.class)}</td>
+        <td>${cell(p.unitNumber)}</td>
+        <td>${cell(p.lessonNumber)}</td>
+        <td>${cell(p.duration).replace(/\s*min$/i, "")} min</td>
+        <td>${learnerCount}</td>
+      </tr>
+
+      <tr>
+        <th colspan="2">
+          Type of Special Educational Needs to be catered for in this lesson
+          and number of learners in each category
+        </th>
+        <td colspan="6">${cell(p.specialNeeds) || "None specified"}</td>
+      </tr>
+
+      <tr>
+        <th colspan="2">Unit title</th>
+        <td colspan="6">${cell(p.unitTitle)}</td>
+      </tr>
+
+      <tr>
+        <th colspan="2">Key Unit Competence</th>
+        <td colspan="6">${cell(p.keyCompetence)}</td>
+      </tr>
+
+      <tr>
+        <th colspan="2">Title of the lesson</th>
+        <td colspan="6">
+          ${cell(p.topic)}${p.subtopic ? " — " + cell(p.subtopic) : ""}
+        </td>
+      </tr>
+
+      <tr>
+        <th colspan="2">Instructional Objective</th>
+        <td colspan="6">${cell(p.objectives)}</td>
+      </tr>
+
+      <tr>
+        <th colspan="2">Plan for this class (location: inside / outside)</th>
+        <td colspan="6">${cell(p.location)}</td>
+      </tr>
+
+      <tr>
+        <th colspan="2">Learning Materials (for all learners)</th>
+        <td colspan="6">${cell(p.materials)}</td>
+      </tr>
+
+      <tr>
+        <th colspan="2">References</th>
+        <td colspan="6">${cell(p.references)}</td>
+      </tr>
+
+      <tr>
+        <th rowspan="3">Timing for each step</th>
+        <th colspan="4" class="center">
+          Description of Teaching and Learning Activity
+        </th>
+        <th colspan="3" rowspan="3" class="center">
+          Generic competences and Cross-cutting issues to be addressed
+          + a short explanation
+        </th>
+      </tr>
+
+      <tr>
+        <td colspan="4">
+          <strong>Brief summary of teaching and learning activities:</strong><br>
+          ${teacherSummary}
+          ${learnerSummary}
+        </td>
+      </tr>
+
+      <tr>
+        <th colspan="2" class="center">Teacher activities</th>
+        <th colspan="2" class="center">Learner activities</th>
+      </tr>
+
+      <tr>
+        <td><strong>Introduction</strong><br>${cell(intro.time)}</td>
+        <td colspan="2">${cell(intro.teacher)}</td>
+        <td colspan="2">${cell(intro.learners)}</td>
+        <td colspan="3">${competencyContent(intro)}</td>
+      </tr>
+
+      <tr>
+        <td><strong>Development of the lesson</strong><br>${cell(dev.time)}</td>
+        <td colspan="2">${cell(dev.teacher)}</td>
+        <td colspan="2">${cell(dev.learners)}</td>
+        <td colspan="3">${competencyContent(dev)}</td>
+      </tr>
+
+      <tr>
+        <td><strong>Conclusion</strong><br>${cell(end.time)}</td>
+        <td colspan="2">${cell(end.teacher)}</td>
+        <td colspan="2">${cell(end.learners)}</td>
+        <td colspan="3">${competencyContent(end)}</td>
+      </tr>
+
+      <tr>
+        <th colspan="2">Teacher self-evaluation</th>
+        <td colspan="6"></td>
+      </tr>
+
+    </tbody>
+  </table>
+  </div>
+  </div>`;
+}
+
+
+function exportWord(){
+  const table = document.getElementById("lessonTable");
+  if(!table){alert("Please prepare a lesson plan first.");return;}
+  const content = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
+  body{font-family:Arial,sans-serif}table{width:100%;border-collapse:collapse}
+  th,td{border:1px solid #444;padding:7px;text-align:left;vertical-align:top;font-size:11pt}
+  th{background:#dce8fa} .center{text-align:center}
+  </style></head><body>${table.outerHTML}</body></html>`;
+  const blob = new Blob(["\ufeff",content],{type:"application/msword"});
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href=url; link.download="DAC_AI_CBC_Lesson_Plan.doc";
+  document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(url);
+}
+
+document.getElementById("clearBtn").addEventListener("click",()=>{
+  form.reset();result.innerHTML="";
+});
+</script>
+</body>
+</html>
