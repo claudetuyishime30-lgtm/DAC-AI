@@ -33,6 +33,22 @@ table.lesson-table{width:100%;border-collapse:collapse;background:#fff;margin:15
 .summary-lines{line-height:1.5}
 .summary-lines div{margin:3px 0}
 footer{text-align:center;color:#64748b;padding:20px}
+/* Help Chat and WhatsApp support */
+.support-buttons{position:fixed;right:18px;bottom:18px;z-index:999;display:flex;flex-direction:column;gap:10px;align-items:flex-end}
+.support-buttons button{margin:0;box-shadow:0 3px 12px #0003;font-weight:bold}
+.help-toggle{background:#0755b8}
+.whatsapp-link{display:inline-block;background:#168a4a;color:#fff;text-decoration:none;padding:12px 18px;border-radius:8px;font-size:15px;font-weight:bold;box-shadow:0 3px 12px #0003}
+.chat-panel{display:none;position:fixed;right:18px;bottom:125px;width:min(340px,calc(100vw - 36px));height:390px;background:#fff;border:1px solid #cbd5e1;border-radius:14px;box-shadow:0 8px 30px #0003;z-index:1000;overflow:hidden}
+.chat-panel.open{display:flex;flex-direction:column}
+.chat-header{background:#092b60;color:#fff;padding:13px 15px;font-weight:bold;display:flex;justify-content:space-between;align-items:center}
+.chat-header button{background:transparent;padding:2px 8px;margin:0;font-size:20px}
+.chat-messages{padding:12px;flex:1;overflow-y:auto;background:#f5f8fd}
+.chat-message{padding:9px 11px;border-radius:10px;margin:7px 0;max-width:92%;font-size:14px;line-height:1.4;white-space:pre-wrap}
+.chat-message.bot{background:#e5eefb;color:#17243a;margin-right:auto}
+.chat-message.user{background:#d8f5e3;color:#17452b;margin-left:auto}
+.chat-form{display:flex;gap:6px;padding:10px;border-top:1px solid #e2e8f0}
+.chat-form input{min-width:0;flex:1;padding:10px}
+.chat-form button{margin:0;padding:10px 13px}
 @media(max-width:650px){.grid{grid-template-columns:1fr}.container{margin:10px;padding:15px}header h1{font-size:25px}}
 @media print{
  body{background:#fff}
@@ -89,6 +105,22 @@ footer{text-align:center;color:#64748b;padding:20px}
 <div id="result"></div>
 </main>
 <footer>D.A.C AI | Designed for Rwanda CBC Education</footer>
+
+<div class="support-buttons no-print">
+  <button type="button" class="help-toggle" id="helpToggle">Help Chat</button>
+  <a class="whatsapp-link" href="https://wa.me/250789501586?text=Hello%20D.A.C%20AI%20Support" target="_blank" rel="noopener">WhatsApp: 0789501586</a>
+</div>
+
+<section class="chat-panel no-print" id="helpChat" aria-label="D.A.C AI Help Chat">
+  <div class="chat-header"><span>D.A.C AI Help Chat</span><button type="button" id="closeChat" aria-label="Close chat">×</button></div>
+  <div class="chat-messages" id="chatMessages" aria-live="polite">
+    <div class="chat-message bot">Muraho! Ndi umufasha wa D.A.C AI. Nabafasha kumenya uko mukora Lesson Plan, guhitamo amasomo, no kubika PDF cyangwa Word. Mubaze ikibazo.</div>
+  </div>
+  <form class="chat-form" id="chatForm">
+    <input id="chatInput" type="text" placeholder="Andika ikibazo hano..." autocomplete="off" required>
+    <button type="submit">Send</button>
+  </form>
+</section>
 
 <script>
 const form = document.getElementById("lessonForm");
@@ -229,7 +261,7 @@ function renderPlan(p, enteredTotal){
         <td>${cell(p.class)}</td>
         <td>${cell(p.unitNumber)}</td>
         <td>${cell(p.lessonNumber)}</td>
-        <td>${cell(p.duration).replace(/\s*min$/i, "")} min</td>
+        <td>${cell(p.duration).replace(/\s*(min|minutes?)\s*$/i, "")} min</td>
         <td>${learnerCount}</td>
       </tr>
 
@@ -349,6 +381,40 @@ function exportWord(){
   link.href=url; link.download="DAC_AI_CBC_Lesson_Plan.doc";
   document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(url);
 }
+
+// Simple offline Help Chat for common D.A.C AI questions.
+const helpChat = document.getElementById("helpChat");
+const chatMessages = document.getElementById("chatMessages");
+document.getElementById("helpToggle").addEventListener("click",()=>helpChat.classList.toggle("open"));
+document.getElementById("closeChat").addEventListener("click",()=>helpChat.classList.remove("open"));
+function addChatMessage(message, type){
+  const item = document.createElement("div");
+  item.className = "chat-message " + type;
+  item.textContent = message;
+  chatMessages.appendChild(item);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+function getHelpAnswer(question){
+  const q = question.toLowerCase();
+  if(q.includes("pdf") || q.includes("print")) return "Kugira ngo ubike Lesson Plan muri PDF: banza uyikore, kanda Print / Save PDF, uhitemo Save as PDF, hanyuma ukande Save.";
+  if(q.includes("word") || q.includes("doc")) return "Kugira ngo ubike muri Word: banza ukore Lesson Plan, hanyuma ukande Export Word. File izabikwa kuri mudasobwa yawe.";
+  if(q.includes("class") || q.includes("grade") || q.includes("level")) return "Hitamo School Level (Primary cyangwa Secondary), hanyuma uhitemo Class / Grade bijyanye n'isomo utegura.";
+  if(q.includes("subject") || q.includes("isomo")) return "Hitamo Subject ushaka. Niba utabonye isomo ukeneye, reba niba ari irishyigikiwe muri version iriho.";
+  if(q.includes("lesson") || q.includes("generate") || q.includes("plan") || q.includes("tegura")) return "Uzuza amakuru asabwa: School Level, Class / Grade, Subject, Title of the Lesson / Topic na Duration. Hanyuma ukande Prepare CBC Lesson Plan.";
+  if(q.includes("minute") || q.includes("duration") || q.includes("igihe")) return "Duration ni umubare w'iminota isomo rizamara. Urugero: andika 40 gusa, ntushyiremo amagambo min.";
+  if(q.includes("whatsapp") || q.includes("contact") || q.includes("help") || q.includes("ubufasha")) return "Ushobora kutwandikira kuri WhatsApp ukoresheje akabuto kari hasi iburyo: 0789501586.";
+  return "Sinashoboye kumva neza ikibazo. Gerageza kubaza uko bakora Lesson Plan, uko babika PDF/Word, cyangwa uko bahitamo Class na Subject. Ushobora no kutwandikira kuri WhatsApp 0789501586.";
+}
+document.getElementById("chatForm").addEventListener("submit",(event)=>{
+  event.preventDefault();
+  const input = document.getElementById("chatInput");
+  const question = input.value.trim();
+  if(!question) return;
+  addChatMessage(question,"user");
+  addChatMessage(getHelpAnswer(question),"bot");
+  input.value = "";
+  input.focus();
+});
 
 document.getElementById("clearBtn").addEventListener("click",()=>{
   form.reset();result.innerHTML="";
