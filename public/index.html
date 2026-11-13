@@ -80,7 +80,7 @@ footer{text-align:center;color:#64748b;padding:20px}
     <div class="field"><label for="term">Term</label><select id="term"><option value="">Select term</option><option>Term 1</option><option>Term 2</option><option>Term 3</option></select></div>
     <div class="field"><label for="level">School Level</label><select id="level" required><option value="">Select level</option><option>Primary</option><option>Secondary</option></select></div>
     <div class="field"><label for="language">Language</label><select id="language"><option>English</option><option>Kinyarwanda</option></select></div>
-    <div class="field"><label for="grade">Class / Grade</label><select id="grade" required><option value="">Select class</option><option>P4</option><option>P5</option><option>P6</option><option>S1</option><option>S2</option><option>S3</option></select></div>
+    <div class="field"><label for="grade">Class / Grade</label><select id="grade" required><option value="">Select class</option><option>P1</option><option>P2</option><option>P3</option><option>P4</option><option>P5</option><option>P6</option><option>S1</option><option>S2</option><option>S3</option></select></div>
     <div class="field"><label for="subject">Subject</label><select id="subject" required><option value="">Select subject</option><option>Social Studies and Religious Education</option><option>Mathematics</option><option>Science and Elementary Technology</option><option>English</option><option>Kinyarwanda</option><option>French</option></select></div>
     <div class="field"><label for="unitNumber">Unit Number</label><input id="unitNumber" type="number" min="1" placeholder="e.g. 4"></div>
     <div class="field"><label for="lessonNumber">Lesson Number</label><input id="lessonNumber" placeholder="e.g. 3 of 13"></div>
@@ -190,28 +190,33 @@ function renderPlan(p, enteredTotal){
     return parts.length ? parts.join("<br>") : "—";
   }
 
-  // Create two short summary lines for each group.
-  function shortSummary(items, key, label){
-    const seen = new Set();
-    const texts = items
-      .map(item => String(item[key] || "").trim())
-      .filter(text => text && !seen.has(text) && seen.add(text))
-      .slice(0, 2);
+// Create one short summary sentence for each group.
+function shortSummary(items, key, label){
+  const seen = new Set();
 
-    function shorten(text){
-      const max = 115;
-      if(text.length <= max) return safe(text);
-      const shortened = text.slice(0, max);
-      const lastSpace = shortened.lastIndexOf(" ");
-      return safe(shortened.slice(0, lastSpace > 60 ? lastSpace : max) + "...");
-    }
+  const texts = items
+    .map(item => String(item[key] || "").trim())
+    .filter(text => text && !seen.has(text) && seen.add(text));
 
-    return "<strong>" + label + ":</strong><div class='summary-lines'>" +
-      (texts.length
-        ? texts.map((text, index) => "<div>" + (index + 1) + ". " + shorten(text) + "</div>").join("")
-        : "<div>—</div>") +
-      "</div>";
+  function shorten(text){
+    text = text.replace(/\s+/g, " ").trim();
+
+    const max = 150;
+    if(text.length <= max) return safe(text);
+
+    const shortened = text.slice(0, max);
+    const lastSpace = shortened.lastIndexOf(" ");
+
+    return safe(shortened.slice(0, lastSpace > 80 ? lastSpace : max).replace(/[.,;:!?-]+$/, "") + ".");
   }
+
+  const summary = texts.length
+    ? shorten(texts[0])
+    : "—";
+
+  return "<strong>" + label + ":</strong> " +
+    "<div class='summary-lines'><div>" + summary + "</div></div>";
+}
 
   const teacherSummary = shortSummary(activityRows, "teacher", "Teacher activities");
   const learnerSummary = shortSummary(activityRows, "learners", "Learner activities");
@@ -323,7 +328,7 @@ function renderPlan(p, enteredTotal){
 
       <tr>
         <td colspan="4">
-          <strong>Brief summary of teaching and learning activities:</strong><br>
+         
           ${teacherSummary}
           ${learnerSummary}
         </td>
